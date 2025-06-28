@@ -1,5 +1,7 @@
 # ToDo List Application
 
+![App Screenshot](src/appScreenshot.png)
+
 A modern, responsive ToDo List application built with vanilla JavaScript, HTML5, and CSS3. Manage your tasks with ease, featuring filtering, sorting, and local storage persistence.
 
 ## Features
