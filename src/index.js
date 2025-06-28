@@ -1,8 +1,7 @@
-// index.js
-import "./styles.css";
-import { loadPage } from "./loadPage.js";
+import './styles.css';
+import { loadPage } from './loadPage';
 
-// Wait for DOM to be fully loaded before executing
+// Initialize the app when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
   loadPage();
 });

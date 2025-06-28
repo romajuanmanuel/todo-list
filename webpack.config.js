@@ -1,42 +1,57 @@
-const path = require("path");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
+const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-module.exports = {
-  mode: "development",
-  entry: "./src/index.js",
-  output: {
-    filename: "main.js",
-    path: path.resolve(__dirname, "dist"),
-    clean: true,
-  },
-  devtool: "eval-source-map",
-  devServer: {
-    watchFiles: ["./src/todo-list.html"],
-  },
-  plugins: [
-    new HtmlWebpackPlugin({
-      template: "./src/todo-list.html",
-    }),
-  ],
-  resolve: {
-    alias: {
-      '@': path.resolve(__dirname, 'src'),
+module.exports = (env, argv) => {
+  const isProduction = argv.mode === 'production';
+  
+  return {
+    mode: isProduction ? 'production' : 'development', // Explicit mode setting
+    entry: './src/index.js',
+    output: {
+      filename: isProduction ? '[name].[contenthash].js' : '[name].js',
+      path: path.resolve(__dirname, 'dist'),
+      publicPath: '/',
+      clean: true
     },
-  },
-  module: {
-    rules: [
-      {
-        test: /\.css$/i,
-        use: ["style-loader", "css-loader"],
-      },
-      {
-        test: /\.html$/i,
-        loader: "html-loader",
-      },
-      {
-        test: /\.(png|svg|jpg|jpeg|gif|webp)$/i,
-        type: "asset/resource",
-      },
+    devtool: isProduction ? 'source-map' : 'eval-cheap-module-source-map',
+    module: {
+      rules: [
+        {
+          test: /\.css$/i,
+          use: ['style-loader', 'css-loader'],
+        },
+        {
+          test: /\.(png|svg|jpg|jpeg|gif)$/i,
+          type: 'asset/resource',
+          generator: {
+            filename: 'assets/[name][ext]'
+          }
+        },
+      ],
+    },
+    plugins: [
+      new HtmlWebpackPlugin({
+        template: './src/index.html',
+        filename: 'index.html',
+        
+      })
     ],
-  },
+    devServer: {
+      static: {
+        directory: path.join(__dirname, 'dist'),
+      },
+      hot: true,
+      compress: true,
+      port: 9000,
+      historyApiFallback: true,
+      devMiddleware: {
+      publicPath: '/', // Must match output.publicPath
+    },
+    },
+    optimization: {
+      splitChunks: {
+        chunks: 'all',
+      },
+    },
+  };
 };
